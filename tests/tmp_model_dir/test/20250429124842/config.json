@@ -2,24 +2,24 @@
     "algo_name": "bc",
     "experiment": {
         "name": "test",
-        "validate": false,
+        "validate": true,
         "logging": {
-            "terminal_output_to_txt": true,
+            "terminal_output_to_txt": false,
             "log_tb": true,
-            "log_wandb": true,
+            "log_wandb": false,
             "wandb_proj_name": "debug"
         },
         "save": {
             "enabled": true,
             "every_n_seconds": null,
-            "every_n_epochs": 50,
+            "every_n_epochs": 1,
             "epochs": [],
             "on_best_validation": false,
             "on_best_rollout_return": false,
             "on_best_rollout_success_rate": true
         },
-        "epoch_every_n_steps": 100,
-        "validation_epoch_every_n_steps": 10,
+        "epoch_every_n_steps": 3,
+        "validation_epoch_every_n_steps": 3,
         "env": null,
         "additional_envs": null,
         "render": false,
@@ -28,23 +28,23 @@
         "video_skip": 5,
         "rollout": {
             "enabled": true,
-            "n": 50,
-            "horizon": 400,
-            "rate": 50,
+            "n": 1,
+            "horizon": 10,
+            "rate": 1,
             "warmstart": 0,
             "terminate_on_success": true
         }
     },
     "train": {
-        "data": null,
-        "output_dir": "../bc_trained_models",
+        "data": "/home/pouyan/phd/imitation_learning/robomimic/robomimic/../tests/assets/test_v15.hdf5",
+        "output_dir": "/home/pouyan/phd/imitation_learning/robomimic/robomimic/../tests/tmp_model_dir",
         "num_data_workers": 0,
-        "hdf5_cache_mode": "all",
+        "hdf5_cache_mode": "low_dim",
         "hdf5_use_swmr": true,
         "hdf5_load_next_obs": false,
         "hdf5_normalize_obs": false,
-        "hdf5_filter_key": null,
-        "hdf5_validation_filter_key": null,
+        "hdf5_filter_key": "train",
+        "hdf5_validation_filter_key": "valid",
         "seq_length": 1,
         "pad_seq_length": true,
         "frame_stack": 1,
@@ -56,8 +56,8 @@
         ],
         "goal_mode": null,
         "cuda": true,
-        "batch_size": 100,
-        "num_epochs": 500,
+        "batch_size": 16,
+        "num_epochs": 1,
         "seed": 1
     },
     "algo": {
@@ -100,7 +100,7 @@
             "low_noise_eval": true
         },
         "vae": {
-            "enabled": false,
+            "enabled": true,
             "latent_dim": 14,
             "latent_clip": null,
             "kl_weight": 1.0,
@@ -109,8 +109,8 @@
                 "reconstruction_sum_across_elements": false
             },
             "prior": {
-                "learn": false,
-                "is_conditioned": false,
+                "learn": true,
+                "is_conditioned": true,
                 "use_gmm": false,
                 "gmm_num_modes": 10,
                 "gmm_learn_weights": false,
@@ -166,10 +166,11 @@
                 "low_dim": [
                     "robot0_eef_pos",
                     "robot0_eef_quat",
-                    "robot0_gripper_qpos",
-                    "object"
+                    "robot0_gripper_qpos"
                 ],
-                "rgb": [],
+                "rgb": [
+                    "agentview_image"
+                ],
                 "depth": [],
                 "scan": []
             },
@@ -189,7 +190,21 @@
             },
             "rgb": {
                 "core_class": "VisualCore",
-                "core_kwargs": {},
+                "core_kwargs": {
+                    "feature_dimension": 64,
+                    "backbone_class": "ResNet18Conv",
+                    "backbone_kwargs": {
+                        "pretrained": false,
+                        "input_coord_conv": false
+                    },
+                    "pool_class": "SpatialSoftmax",
+                    "pool_kwargs": {
+                        "num_kp": 32,
+                        "learnable_temperature": false,
+                        "temperature": 1.0,
+                        "noise_std": 0.0
+                    }
+                },
                 "obs_randomizer_class": null,
                 "obs_randomizer_kwargs": {}
             },
