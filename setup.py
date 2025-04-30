@@ -1,3 +1,16 @@
+"""
+The provided code is a setup.py script, which is a standard file used in Python 
+projects to define the package metadata and configuration for distribution. 
+It is part of the Python packaging ecosystem and works with tools like `setuptools` 
+to package and distribute Python projects.
+It ensures that the project can be installed and used by others, along with its dependencies, 
+through tools like `pip`. So, when a user installs the package from pip, all the dependencies listed in the 
+`install_requires` section of the `setup.py` file will be automatically installed 
+if they are not already present in the user's environment. This ensures that the 
+package has all the required dependencies to function correctly.
+"""
+
+
 from setuptools import setup, find_packages
 
 # read the contents of your README file

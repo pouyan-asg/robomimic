@@ -77,7 +77,7 @@ def algo_config_to_class(algo_config):
 
 class BC(PolicyAlgo):
     """
-    Normal BC training.
+    Vanila BC training.
     """
     def _create_networks(self):
         """
