@@ -10,18 +10,18 @@ import shutil
 import json
 import h5py
 import imageio
+import torch
 import numpy as np
 from copy import deepcopy
 from collections import OrderedDict
 
-import torch
-
 import robomimic
+
 import robomimic.utils.tensor_utils as TensorUtils
 import robomimic.utils.log_utils as LogUtils
 import robomimic.utils.file_utils as FileUtils
-
 from robomimic.utils.dataset import SequenceDataset
+
 from robomimic.envs.env_base import EnvBase
 from robomimic.envs.wrappers import EnvWrapper
 from robomimic.algo import RolloutPolicy
