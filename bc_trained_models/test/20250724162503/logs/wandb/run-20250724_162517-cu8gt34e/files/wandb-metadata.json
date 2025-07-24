@@ -1,0 +1,133 @@
+{
+    "os": "Linux-5.15.0-139-generic-x86_64-with-glibc2.17",
+    "python": "3.8.20",
+    "heartbeatAt": "2025-07-24T20:25:17.911939",
+    "startedAt": "2025-07-24T20:25:17.137623",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "--config",
+        "robomimic/exps/templates/bc.json",
+        "--dataset",
+        "/home/pouyan/phd/imitation_learning/robomimic/datasets/lift/ph/low_dim_v15.hdf5"
+    ],
+    "state": "running",
+    "program": "robomimic/scripts/train.py",
+    "codePathLocal": "robomimic/scripts/train.py",
+    "codePath": "robomimic/scripts/train.py",
+    "git": {
+        "remote": "git@github.com:pouyan-asg/robomimic.git",
+        "commit": "bf950dc0d6c7cbea11e37d5144188574aee8d438"
+    },
+    "email": "pouyan.asgharian@yahoo.com",
+    "root": "/home/pouyan/phd/imitation_learning/robomimic",
+    "host": "pouyan-XPS-15-9500",
+    "username": "pouyan",
+    "executable": "/home/pouyan/anaconda3/envs/robomimic_venv/bin/python",
+    "cpu_count": 8,
+    "cpu_count_logical": 16,
+    "cpu_freq": {
+        "current": 2333.986625,
+        "min": 800.0,
+        "max": 5300.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 1343.786,
+            "min": 800.0,
+            "max": 5300.0
+        },
+        {
+            "current": 2400.0,
+            "min": 800.0,
+            "max": 5300.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 270.78465270996094,
+            "used": 244.4431610107422
+        }
+    },
+    "gpu": "NVIDIA GeForce GTX 1650 Ti",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce GTX 1650 Ti",
+            "memory_total": 4294967296
+        }
+    ],
+    "memory": {
+        "total": 31.08942413330078
+    }
+}
