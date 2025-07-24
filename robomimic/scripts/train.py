@@ -15,11 +15,6 @@ Args:
     debug (bool): set this flag to run a quick training run for debugging purposes    
 """
 
-<<<<<<< HEAD
-"""POUYAN"""
-
-=======
->>>>>>> upstream/master
 import argparse
 import json
 import numpy as np
@@ -47,11 +42,7 @@ from robomimic.algo import algo_factory, RolloutPolicy
 from robomimic.utils.log_utils import PrintLogger, DataLogger, flush_warnings
 
 
-<<<<<<< HEAD
-def train(config, device):
-=======
 def train(config, device, resume=False):
->>>>>>> upstream/master
     """
     Train a model using the algorithm.
     """
@@ -65,15 +56,11 @@ def train(config, device, resume=False):
     print("\n============= New Training Run with Config =============")
     print(config)
     print("")
-<<<<<<< HEAD
-    log_dir, ckpt_dir, video_dir = TrainUtils.get_exp_dir(config)
-=======
     log_dir, ckpt_dir, video_dir, time_dir = TrainUtils.get_exp_dir(config, resume=resume)
 
     # path for latest model and backup (to support @resume functionality)
     latest_model_path = os.path.join(time_dir, "last.pth")
     latest_model_backup_path = os.path.join(time_dir, "last_bak.pth")
->>>>>>> upstream/master
 
     if config.experiment.logging.terminal_output_to_txt:
         # log stdout and stderr to a text file
@@ -84,24 +71,6 @@ def train(config, device, resume=False):
     # read config to set up metadata for observation modalities (e.g. detecting rgb observations)
     ObsUtils.initialize_obs_utils_with_config(config)
 
-<<<<<<< HEAD
-    # make sure the dataset exists
-    dataset_path = os.path.expanduser(config.train.data)
-    if not os.path.exists(dataset_path):
-        raise Exception("Dataset at provided path {} not found!".format(dataset_path))
-
-    # load basic metadata from training file
-    print("\n============= Loaded Environment Metadata =============")
-    env_meta = FileUtils.get_env_metadata_from_dataset(dataset_path=config.train.data)
-    shape_meta = FileUtils.get_shape_metadata_from_dataset(
-        dataset_path=config.train.data,
-        all_obs_keys=config.all_obs_keys,
-        verbose=True
-    )
-
-    if config.experiment.env is not None:
-        env_meta["env_name"] = config.experiment.env
-=======
     # extract the metadata and shape metadata across all datasets
     env_meta_list = []
     shape_meta_list = []
@@ -140,59 +109,12 @@ def train(config, device, resume=False):
         env_meta = env_meta_list[0].copy()
         env_meta["env_name"] = config.experiment.env
         env_meta_list = [env_meta]
->>>>>>> upstream/master
         print("=" * 30 + "\n" + "Replacing Env to {}\n".format(env_meta["env_name"]) + "=" * 30)
 
     # create environment
     envs = OrderedDict()
     if config.experiment.rollout.enabled:
         # create environments for validation runs
-<<<<<<< HEAD
-        env_names = [env_meta["env_name"]]
-
-        if config.experiment.additional_envs is not None:
-            for name in config.experiment.additional_envs:
-                env_names.append(name)
-
-        for env_name in env_names:
-            env = EnvUtils.create_env_from_metadata(
-                env_meta=env_meta,
-                env_name=env_name, 
-                render=False, 
-                render_offscreen=config.experiment.render_video,
-                use_image_obs=shape_meta["use_images"],
-                use_depth_obs=shape_meta["use_depths"],
-            )
-            env = EnvUtils.wrap_env_from_config(env, config=config) # apply environment warpper, if applicable
-            envs[env.name] = env
-            print(envs[env.name])
-
-    print("")
-
-    # setup for a new training run
-    data_logger = DataLogger(
-        log_dir,
-        config,
-        log_tb=config.experiment.logging.log_tb,
-        log_wandb=config.experiment.logging.log_wandb,
-    )
-    model = algo_factory(
-        algo_name=config.algo_name,
-        config=config,
-        obs_key_shapes=shape_meta["all_shapes"],
-        ac_dim=shape_meta["ac_dim"],
-        device=device,
-    )
-    
-    # save the config as a json file
-    with open(os.path.join(log_dir, '..', 'config.json'), 'w') as outfile:
-        json.dump(config, outfile, indent=4)
-
-    print("\n============= Model Summary =============")
-    print(model)  # print model summary
-    print("")
-
-=======
         for env_i in range(len(env_meta_list)):
             # check if this env should be evaluated
             dataset_cfg = config.train.data[env_i]
@@ -231,7 +153,6 @@ def train(config, device, resume=False):
 
     print("")
 
->>>>>>> upstream/master
     # load training data
     trainset, validset = TrainUtils.load_data_for_training(
         config, obs_keys=shape_meta["all_obs_keys"])
@@ -249,12 +170,9 @@ def train(config, device, resume=False):
     if config.train.hdf5_normalize_obs:
         obs_normalization_stats = trainset.get_obs_normalization_stats()
 
-<<<<<<< HEAD
-=======
     # maybe retreve statistics for normalizing actions
     action_normalization_stats = trainset.get_action_normalization_stats()
 
->>>>>>> upstream/master
     # initialize data loaders
     train_loader = DataLoader(
         dataset=trainset,
@@ -280,8 +198,6 @@ def train(config, device, resume=False):
     else:
         valid_loader = None
 
-<<<<<<< HEAD
-=======
     # number of learning steps per epoch (defaults to a full dataset pass)
     train_num_steps = config.experiment.epoch_every_n_steps
     valid_num_steps = config.experiment.validation_epoch_every_n_steps
@@ -353,7 +269,6 @@ def train(config, device, resume=False):
     print(model)  # print model summary
     print("")
 
->>>>>>> upstream/master
     # print all warnings before training begins
     print("*" * 50)
     print("Warnings generated by robomimic have been duplicated here (from above) for convenience. Please check them carefully.")
@@ -367,13 +282,6 @@ def train(config, device, resume=False):
     best_success_rate = {k: -1. for k in envs} if config.experiment.rollout.enabled else None
     last_ckpt_time = time.time()
 
-<<<<<<< HEAD
-    # number of learning steps per epoch (defaults to a full dataset pass)
-    train_num_steps = config.experiment.epoch_every_n_steps
-    valid_num_steps = config.experiment.validation_epoch_every_n_steps
-
-    for epoch in range(1, config.train.num_epochs + 1): # epoch numbers start at 1
-=======
     start_epoch = 1 # epoch numbers start at 1
     if resume:
         # load variable state needed for train loop
@@ -387,7 +295,6 @@ def train(config, device, resume=False):
         print("*" * 50)
 
     for epoch in range(start_epoch, config.train.num_epochs + 1):
->>>>>>> upstream/master
         step_log = TrainUtils.run_epoch(
             model=model,
             data_loader=train_loader,
@@ -450,18 +357,12 @@ def train(config, device, resume=False):
         video_paths = None
         rollout_check = (epoch % config.experiment.rollout.rate == 0) or (should_save_ckpt and ckpt_reason == "time")
         if config.experiment.rollout.enabled and (epoch > config.experiment.rollout.warmstart) and rollout_check:
-<<<<<<< HEAD
-
-            # wrap model as a RolloutPolicy to prepare for rollouts
-            rollout_model = RolloutPolicy(model, obs_normalization_stats=obs_normalization_stats)
-=======
             # wrap model as a RolloutPolicy to prepare for rollouts
             rollout_model = RolloutPolicy(
                 model,
                 obs_normalization_stats=obs_normalization_stats,
                 action_normalization_stats=action_normalization_stats,
             )
->>>>>>> upstream/master
 
             num_episodes = config.experiment.rollout.n
             all_rollout_logs, video_paths = TrainUtils.rollout_with_stats(
@@ -506,25 +407,6 @@ def train(config, device, resume=False):
             if updated_stats["ckpt_reason"] is not None:
                 ckpt_reason = updated_stats["ckpt_reason"]
 
-<<<<<<< HEAD
-        # Only keep saved videos if the ckpt should be saved (but not because of validation score)
-        should_save_video = (should_save_ckpt and (ckpt_reason != "valid")) or config.experiment.keep_all_videos
-        if video_paths is not None and not should_save_video:
-            for env_name in video_paths:
-                os.remove(video_paths[env_name])
-
-        # Save model checkpoints based on conditions (success rate, validation loss, etc)
-        if should_save_ckpt:
-            TrainUtils.save_model(
-                model=model,
-                config=config,
-                env_meta=env_meta,
-                shape_meta=shape_meta,
-                ckpt_path=os.path.join(ckpt_dir, epoch_ckpt_name + ".pth"),
-                obs_normalization_stats=obs_normalization_stats,
-            )
-
-=======
         # get variable state for saving model
         variable_state = dict(
             epoch=epoch,
@@ -563,7 +445,6 @@ def train(config, device, resume=False):
         shutil.copyfile(latest_model_path, latest_model_backup_path)
         print("\nsaved backup of latest model at {}\n".format(latest_model_backup_path))
 
->>>>>>> upstream/master
         # Finally, log memory usage in MB
         process = psutil.Process(os.getpid())
         mem_usage = int(process.memory_info().rss / 1000000)
@@ -587,11 +468,7 @@ def main(args):
         config = config_factory(args.algo)
 
     if args.dataset is not None:
-<<<<<<< HEAD
-        config.train.data = args.dataset
-=======
         config.train.data = [{"path": args.dataset}]
->>>>>>> upstream/master
 
     if args.name is not None:
         config.experiment.name = args.name
@@ -624,11 +501,7 @@ def main(args):
     # catch error during training and print it
     res_str = "finished run successfully!"
     try:
-<<<<<<< HEAD
-        train(config, device=device)
-=======
         train(config, device=device, resume=args.resume)
->>>>>>> upstream/master
     except Exception as e:
         res_str = "run failed with error:\n{}\n\n{}".format(e, traceback.format_exc())
     print(res_str)
@@ -676,11 +549,6 @@ if __name__ == "__main__":
         help="set this flag to run a quick training run for debugging purposes"
     )
 
-<<<<<<< HEAD
-    args = parser.parse_args()
-    main(args)
-
-=======
     # resume training from latest checkpoint
     parser.add_argument(
         "--resume",
@@ -690,4 +558,3 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     main(args)
->>>>>>> upstream/master

@@ -97,11 +97,7 @@ if __name__ == "__main__":
         type=str,
         nargs='+',
         default=["low_dim"],
-<<<<<<< HEAD
-        help="hdf5 types to download datasets for (e.g. raw, low_dim, image). Defaults to low_dim. Pass 'all' \
-=======
         help="hdf5 types to download datasets for (e.g. raw, low_dim, image). Defaults to raw. Pass 'all' \
->>>>>>> upstream/master
             to download datasets for all available hdf5 types per task and dataset, or directly specify the list\
             of hdf5 types.",
     )

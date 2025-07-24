@@ -98,18 +98,6 @@ def obs_encoder_kwargs_from_config(obs_encoder_config):
     # Unlock encoder config
     obs_encoder_config.unlock()
     for obs_modality, encoder_kwargs in obs_encoder_config.items():
-<<<<<<< HEAD
-        # First run some sanity checks and store the classes
-        for cls_name, cores in zip(("core", "obs_randomizer"), (OBS_ENCODER_CORES, OBS_RANDOMIZERS)):
-            # Make sure the requested encoder for each obs_modality exists
-            cfg_cls = encoder_kwargs[f"{cls_name}_class"]
-            if cfg_cls is not None:
-                assert cfg_cls in cores, f"No {cls_name} class with name {cfg_cls} found, must register this class before" \
-                    f"creating model!"
-                # encoder_kwargs[f"{cls_name}_class"] = cores[cfg_cls]
-
-=======
->>>>>>> upstream/master
         # Process core and randomizer kwargs
         encoder_kwargs.core_kwargs = dict() if encoder_kwargs.core_kwargs is None else \
             deepcopy(encoder_kwargs.core_kwargs)
@@ -470,51 +458,6 @@ def get_processed_shape(obs_modality, input_shape):
     return list(process_obs(obs=np.zeros(input_shape), obs_modality=obs_modality).shape)
 
 
-<<<<<<< HEAD
-def normalize_obs(obs_dict, obs_normalization_stats):
-    """
-    Normalize observations using the provided "mean" and "std" entries 
-    for each observation key. The observation dictionary will be
-    modified in-place.
-
-    Args:
-        obs_dict (dict): dictionary mapping observation key to np.array or
-            torch.Tensor. Can have any number of leading batch dimensions.
-
-        obs_normalization_stats (dict): this should map observation keys to dicts
-            with a "mean" and "std" of shape (1, ...) where ... is the default
-            shape for the observation.
-
-    Returns:
-        obs_dict (dict): obs dict with normalized observation arrays
-    """
-
-    # ensure we have statistics for each modality key in the observation
-    assert set(obs_dict.keys()).issubset(obs_normalization_stats)
-
-    for m in obs_dict:
-        # get rid of extra dimension - we will pad for broadcasting later
-        mean = obs_normalization_stats[m]["mean"][0]
-        std = obs_normalization_stats[m]["std"][0]
-
-        # shape consistency checks
-        m_num_dims = len(mean.shape)
-        shape_len_diff = len(obs_dict[m].shape) - m_num_dims
-        assert shape_len_diff >= 0, "shape length mismatch in @normalize_obs"
-        assert obs_dict[m].shape[-m_num_dims:] == mean.shape, "shape mismatch in @normalize_obs"
-
-        # Obs can have one or more leading batch dims - prepare for broadcasting.
-        # 
-        # As an example, if the obs has shape [B, T, D] and our mean / std stats are shape [D]
-        # then we should pad the stats to shape [1, 1, D].
-        reshape_padding = tuple([1] * shape_len_diff)
-        mean = mean.reshape(reshape_padding + tuple(mean.shape))
-        std = std.reshape(reshape_padding + tuple(std.shape))
-
-        obs_dict[m] = (obs_dict[m] - mean) / std
-
-    return obs_dict
-=======
 def normalize_dict(dict, normalization_stats):
     """
     Normalize dict using the provided "offset" and "scale" entries 
@@ -599,7 +542,6 @@ def unnormalize_dict(dict, normalization_stats):
         dict[m] = (dict[m] * scale) + offset
 
     return dict
->>>>>>> upstream/master
 
 
 def has_modality(modality, obs_keys):

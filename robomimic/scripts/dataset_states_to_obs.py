@@ -66,10 +66,7 @@ def extract_trajectory(
     initial_state, 
     states, 
     actions,
-<<<<<<< HEAD
-=======
     actions_abs,
->>>>>>> upstream/master
     done_mode,
     camera_names=None, 
     camera_height=84, 
@@ -92,10 +89,6 @@ def extract_trajectory(
     assert states.shape[0] == actions.shape[0]
 
     # load the initial state
-<<<<<<< HEAD
-    env.reset()
-=======
->>>>>>> upstream/master
     obs = env.reset_to(initial_state)
 
     # maybe add in intrinsics and extrinsics for all cameras
@@ -118,12 +111,9 @@ def extract_trajectory(
         states=np.array(states), 
         initial_state_dict=initial_state,
     )
-<<<<<<< HEAD
-=======
     if actions_abs is not None:
         traj["actions_abs"] = np.array(actions_abs)
     
->>>>>>> upstream/master
     traj_len = states.shape[0]
     # iteration variable @t is over "next obs" indices
     for t in range(1, traj_len + 1):
@@ -260,9 +250,6 @@ def dataset_states_to_obs(args):
         demos = demos[:args.n]
 
     # output file in same directory as input file
-<<<<<<< HEAD
-    output_path = os.path.join(os.path.dirname(args.dataset), args.output_name)
-=======
     output_name = args.output_name
     if output_name is None:
         if len(args.camera_names) == 0:
@@ -271,7 +258,6 @@ def dataset_states_to_obs(args):
             output_name = os.path.basename(args.dataset)[:-5] + "_im{}.hdf5".format(args.camera_width)
 
     output_path = os.path.join(os.path.dirname(args.dataset), output_name)
->>>>>>> upstream/master
     f_out = h5py.File(output_path, "w")
     data_grp = f_out.create_group("data")
     print("input file: {}".format(args.dataset))
@@ -286,11 +272,6 @@ def dataset_states_to_obs(args):
         initial_state = dict(states=states[0])
         if is_robosuite_env:
             initial_state["model"] = f["data/{}".format(ep)].attrs["model_file"]
-<<<<<<< HEAD
-
-        # extract obs, rewards, dones
-        actions = f["data/{}/actions".format(ep)][()]
-=======
             initial_state["ep_meta"] = f["data/{}".format(ep)].attrs.get("ep_meta", None)
 
         # extract obs, rewards, dones
@@ -299,16 +280,12 @@ def dataset_states_to_obs(args):
             actions_abs = f["data/{}/actions_abs".format(ep)][()]
         else:
             actions_abs = None
->>>>>>> upstream/master
         traj, camera_info = extract_trajectory(
             env=env, 
             initial_state=initial_state, 
             states=states, 
             actions=actions,
-<<<<<<< HEAD
-=======
             actions_abs=actions_abs,
->>>>>>> upstream/master
             done_mode=args.done_mode,
             camera_names=args.camera_names, 
             camera_height=args.camera_height, 
@@ -330,11 +307,8 @@ def dataset_states_to_obs(args):
         ep_data_grp.create_dataset("states", data=np.array(traj["states"]))
         ep_data_grp.create_dataset("rewards", data=np.array(traj["rewards"]))
         ep_data_grp.create_dataset("dones", data=np.array(traj["dones"]))
-<<<<<<< HEAD
-=======
         if "actions_abs" in traj:
             ep_data_grp.create_dataset("actions_abs", data=np.array(traj["actions_abs"]))
->>>>>>> upstream/master
         for k in traj["obs"]:
             if args.compress:
                 ep_data_grp.create_dataset("obs/{}".format(k), data=np.array(traj["obs"][k]), compression="gzip")
@@ -346,11 +320,6 @@ def dataset_states_to_obs(args):
                 else:
                     ep_data_grp.create_dataset("next_obs/{}".format(k), data=np.array(traj["next_obs"][k]))
 
-<<<<<<< HEAD
-        # episode metadata
-        if is_robosuite_env:
-            ep_data_grp.attrs["model_file"] = traj["initial_state_dict"]["model"] # model xml for this episode
-=======
         # copy action dict (if applicable)
         if "data/{}/action_dict".format(ep) in f:
             action_dict = f["data/{}/action_dict".format(ep)]
@@ -362,7 +331,6 @@ def dataset_states_to_obs(args):
             ep_data_grp.attrs["model_file"] = traj["initial_state_dict"]["model"] # model xml for this episode
         if "ep_meta" in f["data/{}".format(ep)].attrs:
             ep_data_grp.attrs["ep_meta"] = f["data/{}".format(ep)].attrs["ep_meta"]
->>>>>>> upstream/master
         ep_data_grp.attrs["num_samples"] = traj["actions"].shape[0] # number of transitions in this episode
 
         if camera_info is not None:
@@ -397,10 +365,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_name",
         type=str,
-<<<<<<< HEAD
-        required=True,
-=======
->>>>>>> upstream/master
         help="name of output hdf5 dataset",
     )
 
