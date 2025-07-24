@@ -92,6 +92,10 @@ def test_playback_script(silence=True, use_actions=False, use_obs=False):
                 # camera names
                 args.render_image_names = ["agentview", "robot0_eye_in_hand"]
             args.first = False
+<<<<<<< HEAD
+=======
+            args.render_depth_names = None
+>>>>>>> upstream/master
             playback_dataset(args)
 
             # indicate success

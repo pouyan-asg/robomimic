@@ -19,6 +19,10 @@ import torch
 import robomimic.utils.obs_utils as ObsUtils
 import robomimic.utils.env_utils as EnvUtils
 import robomimic.utils.torch_utils as TorchUtils
+<<<<<<< HEAD
+=======
+import robomimic.utils.lang_utils as LangUtils
+>>>>>>> upstream/master
 from robomimic.config import config_factory
 from robomimic.algo import algo_factory
 from robomimic.algo import RolloutPolicy
@@ -107,6 +111,11 @@ def get_env_metadata_from_dataset(dataset_path, set_env_specific_obs_processors=
     dataset_path = os.path.expanduser(dataset_path)
     f = h5py.File(dataset_path, "r")
     env_meta = json.loads(f["data"].attrs["env_args"])
+<<<<<<< HEAD
+=======
+    if "env_lang" in env_meta["env_kwargs"]: del env_meta["env_kwargs"]["env_lang"]
+
+>>>>>>> upstream/master
     f.close()
     if set_env_specific_obs_processors:
         # handle env-specific custom observation processing logic
@@ -114,12 +123,21 @@ def get_env_metadata_from_dataset(dataset_path, set_env_specific_obs_processors=
     return env_meta
 
 
+<<<<<<< HEAD
 def get_shape_metadata_from_dataset(dataset_path, all_obs_keys=None, verbose=False):
+=======
+def get_shape_metadata_from_dataset(dataset_config, action_keys, all_obs_keys=None, verbose=False):
+>>>>>>> upstream/master
     """
     Retrieves shape metadata from dataset.
 
     Args:
+<<<<<<< HEAD
         dataset_path (str): path to dataset
+=======
+        dataset_config (str): config for dataset
+        action_keys (list): list of all action key strings
+>>>>>>> upstream/master
         all_obs_keys (list): list of all modalities used by the model. If not provided, all modalities
             present in the file are used.
         verbose (bool): if True, include print statements
@@ -137,6 +155,7 @@ def get_shape_metadata_from_dataset(dataset_path, all_obs_keys=None, verbose=Fal
     shape_meta = {}
 
     # read demo file for some metadata
+<<<<<<< HEAD
     dataset_path = os.path.expanduser(dataset_path)
     f = h5py.File(dataset_path, "r")
     demo_id = list(f["data"].keys())[0]
@@ -144,6 +163,18 @@ def get_shape_metadata_from_dataset(dataset_path, all_obs_keys=None, verbose=Fal
 
     # action dimension
     shape_meta['ac_dim'] = f["data/{}/actions".format(demo_id)].shape[1]
+=======
+    dataset_path = os.path.expanduser(dataset_config["path"])
+    f = h5py.File(dataset_path, "r")
+    
+    demo_id = list(f["data"].keys())[0]
+    demo = f["data/{}".format(demo_id)]
+    
+    for key in action_keys:
+        assert len(demo[key].shape) == 2 # shape should be (B, D)
+    action_dim = sum([demo[key].shape[1] for key in action_keys])
+    shape_meta["ac_dim"] = action_dim
+>>>>>>> upstream/master
 
     # observation dimensions
     all_shapes = OrderedDict()
@@ -153,7 +184,17 @@ def get_shape_metadata_from_dataset(dataset_path, all_obs_keys=None, verbose=Fal
         all_obs_keys = [k for k in demo["obs"]]
 
     for k in sorted(all_obs_keys):
+<<<<<<< HEAD
         initial_shape = demo["obs/{}".format(k)].shape[1:]
+=======
+        if k == LangUtils.LANG_EMB_OBS_KEY:
+            # NOTE: currently supporting fixed language embedding per dataset
+            ## that is fetched from dataset config and not from file
+            assert "lang" in dataset_config, "Expected 'lang' key in dataset config."
+            initial_shape = LangUtils.get_lang_emb_shape()
+        else:
+            initial_shape = demo["obs/{}".format(k)].shape[1:]
+>>>>>>> upstream/master
         if verbose:
             print("obs key {} with shape {}".format(k, initial_shape))
         # Store processed shape for each obs key
@@ -184,9 +225,15 @@ def load_dict_from_checkpoint(ckpt_path):
     """
     ckpt_path = os.path.expanduser(ckpt_path)
     if not torch.cuda.is_available():
+<<<<<<< HEAD
         ckpt_dict = torch.load(ckpt_path, map_location=lambda storage, loc: storage)
     else:
         ckpt_dict = torch.load(ckpt_path)
+=======
+        ckpt_dict = torch.load(ckpt_path, map_location=lambda storage, loc: storage, weights_only=False)
+    else:
+        ckpt_dict = torch.load(ckpt_path, weights_only=False)
+>>>>>>> upstream/master
     return ckpt_dict
 
 
@@ -399,6 +446,16 @@ def policy_from_checkpoint(device=None, ckpt_path=None, ckpt_dict=None, verbose=
             for k in obs_normalization_stats[m]:
                 obs_normalization_stats[m][k] = np.array(obs_normalization_stats[m][k])
 
+<<<<<<< HEAD
+=======
+    # maybe restore action normalization stats
+    action_normalization_stats = ckpt_dict.get("action_normalization_stats", None)
+    if action_normalization_stats is not None:
+        for m in action_normalization_stats:
+            for k in action_normalization_stats[m]:
+                action_normalization_stats[m][k] = np.array(action_normalization_stats[m][k])
+
+>>>>>>> upstream/master
     if device is None:
         # get torch device
         device = TorchUtils.get_torch_device(try_to_use_cuda=config.train.cuda)
@@ -413,7 +470,15 @@ def policy_from_checkpoint(device=None, ckpt_path=None, ckpt_dict=None, verbose=
     )
     model.deserialize(ckpt_dict["model"])
     model.set_eval()
+<<<<<<< HEAD
     model = RolloutPolicy(model, obs_normalization_stats=obs_normalization_stats)
+=======
+    model = RolloutPolicy(
+        model,
+        obs_normalization_stats=obs_normalization_stats,
+        action_normalization_stats=action_normalization_stats
+    )
+>>>>>>> upstream/master
     if verbose:
         print("============= Loaded Policy =============")
         print(model)

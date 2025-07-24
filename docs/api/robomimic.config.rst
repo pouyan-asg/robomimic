@@ -44,6 +44,17 @@ robomimic.config.cql\_config module
    :undoc-members:
    :show-inheritance:
 
+<<<<<<< HEAD
+=======
+robomimic.config.diffusion\_policy\_config module
+-------------------------------------------------
+
+.. automodule:: robomimic.config.diffusion_policy_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+>>>>>>> upstream/master
 robomimic.config.gl\_config module
 ----------------------------------
 

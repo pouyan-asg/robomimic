@@ -177,6 +177,10 @@ $ cd <PATH_TO_ROBOMIMIC_INSTALL_DIR>/docs
 $ make clean
 $ make apidoc
 $ make html
+<<<<<<< HEAD
+=======
+$ make prep
+>>>>>>> upstream/master
 $ cp -r images _build/html/
 ```
 

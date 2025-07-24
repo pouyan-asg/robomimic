@@ -136,7 +136,11 @@ obs_encoder.register_obs_key(
     shape=camera1_shape,
     net_class=net_class,
     net_kwargs=net_kwargs,
+<<<<<<< HEAD
     randomizer=image_randomizer
+=======
+    randomizers=image_randomizer
+>>>>>>> upstream/master
 )
 
 # We could mix low-dimensional observation, e.g., proprioception signal, in the encoder

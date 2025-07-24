@@ -13,7 +13,11 @@ Args:
         like to override the location.
 
     tasks (list): Tasks to download datasets for. Defaults to lift task. Pass 'all' to 
+<<<<<<< HEAD
         download all tasks (sim + real), 'sim' to download all sim tasks, 'real' to 
+=======
+        download all tasks (sim + real) 'sim' to download all sim tasks, 'real' to 
+>>>>>>> upstream/master
         download all real tasks, or directly specify the list of tasks.
     
     dataset_types (list): Dataset types to download datasets for (e.g. ph, mh, mg). 
@@ -93,7 +97,11 @@ if __name__ == "__main__":
         type=str,
         nargs='+',
         default=["low_dim"],
+<<<<<<< HEAD
         help="hdf5 types to download datasets for (e.g. raw, low_dim, image). Defaults to low_dim. Pass 'all' \
+=======
+        help="hdf5 types to download datasets for (e.g. raw, low_dim, image). Defaults to raw. Pass 'all' \
+>>>>>>> upstream/master
             to download datasets for all available hdf5 types per task and dataset, or directly specify the list\
             of hdf5 types.",
     )

@@ -98,6 +98,7 @@ def obs_encoder_kwargs_from_config(obs_encoder_config):
     # Unlock encoder config
     obs_encoder_config.unlock()
     for obs_modality, encoder_kwargs in obs_encoder_config.items():
+<<<<<<< HEAD
         # First run some sanity checks and store the classes
         for cls_name, cores in zip(("core", "obs_randomizer"), (OBS_ENCODER_CORES, OBS_RANDOMIZERS)):
             # Make sure the requested encoder for each obs_modality exists
@@ -107,6 +108,8 @@ def obs_encoder_kwargs_from_config(obs_encoder_config):
                     f"creating model!"
                 # encoder_kwargs[f"{cls_name}_class"] = cores[cfg_cls]
 
+=======
+>>>>>>> upstream/master
         # Process core and randomizer kwargs
         encoder_kwargs.core_kwargs = dict() if encoder_kwargs.core_kwargs is None else \
             deepcopy(encoder_kwargs.core_kwargs)
@@ -467,6 +470,7 @@ def get_processed_shape(obs_modality, input_shape):
     return list(process_obs(obs=np.zeros(input_shape), obs_modality=obs_modality).shape)
 
 
+<<<<<<< HEAD
 def normalize_obs(obs_dict, obs_normalization_stats):
     """
     Normalize observations using the provided "mean" and "std" entries 
@@ -510,6 +514,92 @@ def normalize_obs(obs_dict, obs_normalization_stats):
         obs_dict[m] = (obs_dict[m] - mean) / std
 
     return obs_dict
+=======
+def normalize_dict(dict, normalization_stats):
+    """
+    Normalize dict using the provided "offset" and "scale" entries 
+    for each observation key. The dictionary will be
+    modified in-place.
+
+    Args:
+        dict (dict): dictionary mapping key to np.array or
+            torch.Tensor. Leading batch dimensions are optional.
+
+        normalization_stats (dict): this should map keys to dicts
+            with a "offset" and "scale" of shape (1, ...) where ... is the default
+            shape for the dict value.
+
+    Returns:
+        dict (dict): obs dict with normalized arrays
+    """
+
+    # ensure we have statistics for each modality key in the dict
+    assert set(dict.keys()).issubset(normalization_stats), f"dict keys {list(dict.keys())} \
+         should be subset of normalization stats keys {list(normalization_stats.keys())}"
+
+    for m in dict:
+        offset = normalization_stats[m]["offset"][0]
+        scale = normalization_stats[m]["scale"][0]
+
+        # check shape consistency
+        o_num_dims = len(offset.shape)
+        shape_len_diff = len(offset.shape) - o_num_dims
+        assert shape_len_diff >= 0, "shape length mismatch in @normalize_dict"
+        assert dict[m].shape[-o_num_dims:] == offset.shape, "shape mismatch in @normalize_obs"
+
+        # Obs can have one or more leading batch dims - prepare for broadcasting.
+        # 
+        # As an example, if the obs has shape [B, T, D] and our offset / scale stats are shape [D]
+        # then we should pad the stats to shape [1, 1, D].
+        reshape_padding = tuple([1] * shape_len_diff)
+        offset = offset.reshape(reshape_padding + tuple(offset.shape))
+        scale = scale.reshape(reshape_padding + tuple(scale.shape))
+
+        dict[m] = (dict[m] - offset) / scale
+
+    return dict
+
+
+def unnormalize_dict(dict, normalization_stats):
+    """
+    Unnormalize dict using the provided "offset" and "scale" entries 
+    for each observation key. The dictionary will be
+    modified in-place.
+
+    Args:
+        dict (dict): dictionary mapping key to np.array or
+            torch.Tensor. Leading batch dimensions are optional.
+
+        normalization_stats (dict): this should map keys to dicts
+            with a "offset" and "scale" of shape (1, ...) where ... is the default
+            shape for the dict value.
+
+    Returns:
+        dict (dict): obs dict with normalized arrays
+    """
+
+    # ensure we have statistics for each modality key in the dict
+    assert set(dict.keys()).issubset(normalization_stats)
+
+    for m in dict:
+        offset = normalization_stats[m]["offset"]
+        scale = normalization_stats[m]["scale"]
+
+        # check shape consistency
+        shape_len_diff = len(offset.shape) - len(dict[m].shape)
+        assert shape_len_diff in [0, 1], "shape length mismatch in @unnormalize_dict"
+        # if dict has no leading batch dim, check shapes match exactly, else allow first dim to broadcast
+        assert offset.shape[1:] == dict[m].shape[(1 - shape_len_diff):], "shape mismatch in @unnormalize_dict"
+
+        # handle case where obs dict is not batched by removing stats batch dimension
+        if shape_len_diff == 1:
+            offset = offset[0]
+            scale = scale[0]
+
+        dict[m] = (dict[m] * scale) + offset
+
+    return dict
+>>>>>>> upstream/master
 
 
 def has_modality(modality, obs_keys):

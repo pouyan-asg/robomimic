@@ -42,9 +42,19 @@ Welcome to robomimic's documentation!
    tutorials/hyperparam_scan
    tutorials/reproducing_experiments
    tutorials/dataset_contents
+<<<<<<< HEAD
    tutorials/training_transformers
    tutorials/using_pretrained_models
    tutorials/observations
+=======
+   tutorials/multi_dataset_training
+   tutorials/training_transformers
+   tutorials/training_diffusion_policy
+   tutorials/using_pretrained_models
+   tutorials/observations
+   tutorials/action_configs
+   tutorials/language_conditioning
+>>>>>>> upstream/master
    tutorials/pretrained_representations
    tutorials/custom_algorithms
    tutorials/tensor_collections
@@ -81,6 +91,10 @@ Welcome to robomimic's documentation!
    :maxdepth: 1
    :caption: Previous Versions
 
+<<<<<<< HEAD
+=======
+   versions/v0.4
+>>>>>>> upstream/master
    versions/v0.3
    versions/v0.2
 

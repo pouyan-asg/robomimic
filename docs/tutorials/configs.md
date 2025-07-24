@@ -39,7 +39,11 @@ config = config_factory(algo_name="bc")
 
 # set config attributes here that you would like to update
 config.experiment.name = "bc_rnn_example"
+<<<<<<< HEAD
 config.train.data = "/path/to/dataset.hdf5"
+=======
+config.train.data = [{"path": "/path/to/dataset.hdf5"}]
+>>>>>>> upstream/master
 config.train.output_dir = "/path/to/desired/output_dir"
 config.train.batch_size = 256
 config.train.num_epochs = 500

@@ -60,7 +60,11 @@ def simple_obs_example():
         name="camera2",
         shape=camera2_shape,
         net=net,
+<<<<<<< HEAD
         randomizer=image_randomizer,
+=======
+        randomizers=image_randomizer,
+>>>>>>> upstream/master
     )
 
     # ObservationEncoder also supports weight sharing between keys

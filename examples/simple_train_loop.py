@@ -37,11 +37,19 @@ def get_data_loader(dataset_path):
             "robot0_gripper_qpos", 
             "object",
         ),
+<<<<<<< HEAD
+=======
+        action_keys=("actions",),       # actions we want to appear in batches
+>>>>>>> upstream/master
         dataset_keys=(                  # can optionally specify more keys here if they should appear in batches
             "actions", 
             "rewards", 
             "dones",
         ),
+<<<<<<< HEAD
+=======
+        action_config={"actions": {}},  # use default action config
+>>>>>>> upstream/master
         load_next_obs=True,
         frame_stack=1,
         seq_length=10,                  # length-10 temporal sequences
@@ -77,12 +85,23 @@ def get_example_model(dataset_path, device):
     # default BC config
     config = config_factory(algo_name="bc")
 
+<<<<<<< HEAD
+=======
+    # override dataset path in config
+    config.train.data = [{"path": dataset_path}]
+
+>>>>>>> upstream/master
     # read config to set up metadata for observation modalities (e.g. detecting rgb observations)
     ObsUtils.initialize_obs_utils_with_config(config)
 
     # read dataset to get some metadata for constructing model
     shape_meta = FileUtils.get_shape_metadata_from_dataset(
+<<<<<<< HEAD
         dataset_path=dataset_path, 
+=======
+        dataset_config=config.train.data[0], 
+        action_keys=config.train.action_keys,
+>>>>>>> upstream/master
         all_obs_keys=sorted((
             "robot0_eef_pos", 
             "robot0_eef_quat", 

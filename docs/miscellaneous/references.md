@@ -1,5 +1,6 @@
 # Projects using robomimic
 
+<<<<<<< HEAD
 A list of projects and papers that use **robomimic**. If you would like to add your work to this list, please send the paper or project information to Ajay Mandlekar (<amandlek@cs.stanford.edu>).
 
 ## 2023
@@ -48,3 +49,6 @@ A list of projects and papers that use **robomimic**. If you would like to add y
 
 - [Human-in-the-Loop Imitation Learning using Remote Teleoperation](https://arxiv.org/abs/2012.06733). Ajay Mandlekar, Danfei Xu, Roberto Martín-Martín, Yuke Zhu, Li Fei-Fei, Silvio Savarese
 - [IRIS: Implicit Reinforcement without Interaction at Scale for Learning Control from Offline Robot Manipulation Data](https://arxiv.org/abs/1911.05321). Ajay Mandlekar, Fabio Ramos, Byron Boots, Silvio Savarese, Li Fei-Fei, Animesh Garg, Dieter Fox
+=======
+Please see [this link](https://scholar.google.com/scholar?hl=en&as_sdt=2005&sciodt=0,5&cites=3943356860137248514&scipsc=&q=) to see projects and papers that use or reference robomimic.
+>>>>>>> upstream/master

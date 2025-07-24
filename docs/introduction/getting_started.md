@@ -19,14 +19,22 @@ Download the robosuite **Lift (PH)** dataset (see [this link](../datasets/robomi
 $ python robomimic/scripts/download_datasets.py --tasks lift --dataset_types ph
 ```
 
+<<<<<<< HEAD
 The dataset can be found at `datasets/lift/ph/low_dim_v15.hdf5`
+=======
+The dataset can be found at `datasets/lift/ph/low_dim_v141.hdf5`
+>>>>>>> upstream/master
 
 ### Step 2: Launch experiment
 
 Now, we will run an experiment using `train.py`. In this case we would like to run behavior cloning (BC) for the lift dataset we just downloaded.
 
 ```sh
+<<<<<<< HEAD
 $ python robomimic/scripts/train.py --config robomimic/exps/templates/bc.json --dataset datasets/lift/ph/low_dim_v15.hdf5 --debug
+=======
+$ python robomimic/scripts/train.py --config robomimic/exps/templates/bc.json --dataset datasets/lift/ph/low_dim_v141.hdf5 --debug
+>>>>>>> upstream/master
 ```
 
 <div class="admonition note">
@@ -36,10 +44,21 @@ Make sure to add the `--debug` flag to your experiments as a sanity check that y
 
 </div>
 
+<<<<<<< HEAD
 <div class="admonition warning">
 <p class="admonition-title">Warning!</p>
 
 This example [requires robosuite](./installation.html#install-simulators) to be installed (under the `v1.4.1` branch), but it can be run without robosuite by disabling rollouts in `robomimic/exps/templates/bc.json`: simply change the `experiment.rollout.enabled` flag to `false`.
+=======
+**Resume functionality**: If your training job fails due to any reason, you can re-launch your job with the additional `--resume` flag to resume training from the last saved epoch. This will resume training from the `last.pth` checkpoint in your output directory for the most recent training run. Some points to note:
+1. While fine-tuning from a specified checkpoint (in `config.experiment.ckpt_path`) would load model weights from the checkpoint, resume functionality also loads the optimizer state.
+2. `config.experiment.ckpt_path` will be ignored if you are resuming a training job, i.e. `last.pth` will take precedence if `--resume` is passed.
+
+<div class="admonition warning">
+<p class="admonition-title">Warning!</p>
+
+This example [requires robosuite](./installation.html#install-simulators) to be installed (under the `v1.5.1` branch), but it can be run without robosuite by disabling rollouts in `robomimic/exps/templates/bc.json`: simply change the `experiment.rollout.enabled` flag to `false`.
+>>>>>>> upstream/master
 
 </div>
 

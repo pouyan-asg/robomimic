@@ -36,6 +36,17 @@ robomimic.utils.hyperparam\_utils module
    :undoc-members:
    :show-inheritance:
 
+<<<<<<< HEAD
+=======
+robomimic.utils.lang\_utils module
+----------------------------------
+
+.. automodule:: robomimic.utils.lang_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+>>>>>>> upstream/master
 robomimic.utils.log\_utils module
 ---------------------------------
 

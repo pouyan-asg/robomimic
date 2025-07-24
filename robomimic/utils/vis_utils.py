@@ -4,6 +4,10 @@ These functions can be a useful debugging tool.
 """
 import numpy as np
 import matplotlib.pyplot as plt
+<<<<<<< HEAD
+=======
+import os
+>>>>>>> upstream/master
 import matplotlib.cm as cm
 
 import robomimic.utils.tensor_utils as TensorUtils
