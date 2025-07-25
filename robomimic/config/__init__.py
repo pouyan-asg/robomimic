@@ -9,9 +9,5 @@ from robomimic.config.iql_config import IQLConfig
 from robomimic.config.gl_config import GLConfig
 from robomimic.config.hbc_config import HBCConfig
 from robomimic.config.iris_config import IRISConfig
-<<<<<<< HEAD
-from robomimic.config.td3_bc_config import TD3_BCConfig
-=======
 from robomimic.config.td3_bc_config import TD3_BCConfig
 from robomimic.config.diffusion_policy_config import DiffusionPolicyConfig
->>>>>>> upstream/master

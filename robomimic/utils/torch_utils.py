@@ -2,15 +2,10 @@
 This file contains some PyTorch utilities.
 """
 import numpy as np
-<<<<<<< HEAD
-import torch
-import torch.optim as optim
-=======
 import math
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
->>>>>>> upstream/master
 
 
 def soft_update(source, target, tau):
@@ -144,13 +139,6 @@ def lr_scheduler_from_optim_params(net_optim_params, net, optimizer):
         lr_scheduler (torch.optim.lr_scheduler or None): learning rate scheduler
     """
     lr_scheduler_type = net_optim_params["learning_rate"].get("scheduler_type", "multistep")
-<<<<<<< HEAD
-    epoch_schedule = net_optim_params["learning_rate"]["epoch_schedule"]
-
-    lr_scheduler = None
-    if len(epoch_schedule) > 0:
-        if lr_scheduler_type == "linear":
-=======
     num_train_batches = net_optim_params["num_train_batches"]
     num_epochs = net_optim_params["num_epochs"]
 
@@ -158,7 +146,6 @@ def lr_scheduler_from_optim_params(net_optim_params, net, optimizer):
     if lr_scheduler_type == "linear":
         epoch_schedule = net_optim_params["learning_rate"]["epoch_schedule"]
         if len(epoch_schedule) > 0:
->>>>>>> upstream/master
             assert len(epoch_schedule) == 1
             end_epoch = epoch_schedule[0]
             
@@ -168,22 +155,14 @@ def lr_scheduler_from_optim_params(net_optim_params, net, optimizer):
                 end_factor=net_optim_params["learning_rate"]["decay_factor"],
                 total_iters=end_epoch,
             )
-<<<<<<< HEAD
-        elif lr_scheduler_type == "multistep":
-=======
     elif lr_scheduler_type == "multistep":
         epoch_schedule = net_optim_params["learning_rate"]["epoch_schedule"]
         if len(epoch_schedule) > 0:
->>>>>>> upstream/master
             return optim.lr_scheduler.MultiStepLR(
                 optimizer=optimizer,
                 milestones=epoch_schedule,
                 gamma=net_optim_params["learning_rate"]["decay_factor"],
             )
-<<<<<<< HEAD
-        else:
-            raise ValueError("Invalid LR scheduler type: {}".format(lr_scheduler_type))
-=======
     elif lr_scheduler_type == "cosine":
         assert net_optim_params["learning_rate"]["step_every_batch"]
         # source: https://github.com/huggingface/diffusers/blob/ee7e141d805b0d87ad207872060ae1f15ce65943/src/diffusers/optimization.py#L154
@@ -199,13 +178,10 @@ def lr_scheduler_from_optim_params(net_optim_params, net, optimizer):
 
     else:
         raise ValueError("Invalid LR scheduler type: {}".format(lr_scheduler_type))
->>>>>>> upstream/master
         
     return lr_scheduler
 
 
-<<<<<<< HEAD
-=======
 def get_state_dict(obj):
     """
     Returns a state dict for an input of objects. This is useful for
@@ -254,7 +230,6 @@ def load_state_dict(obj, state_dict):
         raise ValueError("Cannot load state dict.")
 
 
->>>>>>> upstream/master
 def backprop_for_loss(net, optim, loss, max_grad_norm=None, retain_graph=False):
     """
     Backpropagate loss and update parameters for network with
@@ -296,8 +271,6 @@ def backprop_for_loss(net, optim, loss, max_grad_norm=None, retain_graph=False):
     return grad_norms
 
 
-<<<<<<< HEAD
-=======
 def rot_6d_to_axis_angle(rot_6d):
     """
     Converts tensor with rot_6d representation to axis-angle representation.
@@ -334,7 +307,6 @@ def euler_angles_to_rot_6d(euler_angles, convention="XYZ"):
     return rot_6d
 
 
->>>>>>> upstream/master
 class dummy_context_mgr():
     """
     A dummy context manager - useful for having conditional scopes (such
@@ -353,8 +325,6 @@ def maybe_no_grad(no_grad):
             it will be a dummy context
     """
     return torch.no_grad() if no_grad else dummy_context_mgr()
-<<<<<<< HEAD
-=======
 
 
 """
@@ -730,4 +700,3 @@ def _axis_angle_rotation(axis: str, angle: torch.Tensor) -> torch.Tensor:
         raise ValueError("letter must be either X, Y or Z.")
 
     return torch.stack(R_flat, -1).reshape(angle.shape + (3, 3))
->>>>>>> upstream/master

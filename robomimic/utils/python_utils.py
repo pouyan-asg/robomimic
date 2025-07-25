@@ -3,13 +3,10 @@ Set of general purpose utility functions for easier interfacing with Python API
 """
 import inspect
 from copy import deepcopy
-<<<<<<< HEAD
-=======
 from typing import Union, Sequence, Dict, Optional, Tuple
 
 import numpy as np
 
->>>>>>> upstream/master
 import robomimic.macros as Macros
 
 
@@ -77,9 +74,6 @@ def extract_class_init_kwargs_from_dict(cls, dic, copy=False, verbose=False):
         if len(keys_not_in_dic) > 0:
             print(f"Warning: For class {cls.__name__}, got missing keys: {keys_not_in_dic} ")
 
-<<<<<<< HEAD
-    return subdic
-=======
     return subdic
 
 
@@ -123,4 +117,3 @@ def vector_to_action_dict(
             action.shape[:-1]+this_act_shape)
         start_idx = end_idx
     return action_dict
->>>>>>> upstream/master

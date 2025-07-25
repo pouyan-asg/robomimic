@@ -14,10 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import transforms
 from torchvision import models as vision_models
-<<<<<<< HEAD
-=======
 from torchvision import transforms
->>>>>>> upstream/master
 
 import robomimic.utils.tensor_utils as TensorUtils
 import robomimic.utils.obs_utils as ObsUtils
@@ -561,8 +558,6 @@ class ResNet18Conv(ConvBase):
         return header + '(input_channel={}, input_coord_conv={})'.format(self._input_channel, self._input_coord_conv)
 
 
-<<<<<<< HEAD
-=======
 class ResNet50Conv(ConvBase):
     """
     A ResNet50 block that can be used to process input images.
@@ -751,7 +746,6 @@ class ResNet18ConvFiLM(ConvBase):
         return header + '(input_channel={}, input_coord_conv={})'.format(self._input_channel, self._input_coord_conv)
 
 
->>>>>>> upstream/master
 class R3MConv(ConvBase):
     """
     Base class for ConvNets pretrained with R3M (https://arxiv.org/abs/2203.12601)

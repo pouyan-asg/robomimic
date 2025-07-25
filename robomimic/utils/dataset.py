@@ -5,27 +5,18 @@ to fetch batches from hdf5 files.
 import os
 import h5py
 import numpy as np
-<<<<<<< HEAD
-from copy import deepcopy
-from contextlib import contextmanager
-=======
 import random
 from copy import deepcopy
 from contextlib import contextmanager
 from collections import OrderedDict
->>>>>>> upstream/master
 
 import torch.utils.data
 
 import robomimic.utils.tensor_utils as TensorUtils
 import robomimic.utils.obs_utils as ObsUtils
-<<<<<<< HEAD
-import robomimic.utils.log_utils as LogUtils
-=======
 import robomimic.utils.python_utils as PyUtils
 import robomimic.utils.log_utils as LogUtils
 import robomimic.utils.lang_utils as LangUtils
->>>>>>> upstream/master
 
 
 class SequenceDataset(torch.utils.data.Dataset):
@@ -33,13 +24,9 @@ class SequenceDataset(torch.utils.data.Dataset):
         self,
         hdf5_path,
         obs_keys,
-<<<<<<< HEAD
-        dataset_keys,
-=======
         action_keys,
         dataset_keys,
         action_config,
->>>>>>> upstream/master
         frame_stack=1,
         seq_length=1,
         pad_frame_stack=True,
@@ -51,11 +38,8 @@ class SequenceDataset(torch.utils.data.Dataset):
         hdf5_normalize_obs=False,
         filter_by_attribute=None,
         load_next_obs=True,
-<<<<<<< HEAD
-=======
         lang=None,
         demo_limit=None,
->>>>>>> upstream/master
     ):
         """
         Dataset class for fetching sequences of experience.
@@ -66,11 +50,8 @@ class SequenceDataset(torch.utils.data.Dataset):
 
             obs_keys (tuple, list): keys to observation items (image, object, etc) to be fetched from the dataset
 
-<<<<<<< HEAD
-=======
             action_config (dict): specifing each action keys to load and their corresponding normalization/conversion requirement
 
->>>>>>> upstream/master
             dataset_keys (tuple, list): keys to dataset items (actions, rewards, etc) to be fetched from the dataset
 
             frame_stack (int): numbers of stacked frames to fetch. Defaults to 1 (single frame).
@@ -108,13 +89,10 @@ class SequenceDataset(torch.utils.data.Dataset):
                 demonstrations to load
 
             load_next_obs (bool): whether to load next_obs from the dataset
-<<<<<<< HEAD
-=======
 
             lang: language instruction for this dataset
 
             demo_limit (int): if provided, limit the number of demonstrations to load from the dataset.
->>>>>>> upstream/master
         """
         super(SequenceDataset, self).__init__()
 
@@ -129,11 +107,6 @@ class SequenceDataset(torch.utils.data.Dataset):
         self.load_next_obs = load_next_obs
         self.filter_by_attribute = filter_by_attribute
 
-<<<<<<< HEAD
-        # get all keys that needs to be fetched
-        self.obs_keys = tuple(obs_keys)
-        self.dataset_keys = tuple(dataset_keys)
-=======
         # set up lang and language embedding
         self.lang = lang
         self._lang_emb = None
@@ -149,7 +122,6 @@ class SequenceDataset(torch.utils.data.Dataset):
             self.dataset_keys = tuple(set(self.dataset_keys).union(set(self.action_keys)))
 
         self.action_config = action_config
->>>>>>> upstream/master
 
         self.n_frame_stack = frame_stack
         assert self.n_frame_stack >= 1
@@ -167,23 +139,16 @@ class SequenceDataset(torch.utils.data.Dataset):
         self.pad_frame_stack = pad_frame_stack
         self.get_pad_mask = get_pad_mask
 
-<<<<<<< HEAD
-        self.load_demo_info(filter_by_attribute=self.filter_by_attribute)
-=======
         self.load_demo_info(filter_by_attribute=self.filter_by_attribute, demo_limit=demo_limit)
->>>>>>> upstream/master
 
         # maybe prepare for observation normalization
         self.obs_normalization_stats = None
         if self.hdf5_normalize_obs:
             self.obs_normalization_stats = self.normalize_obs()
 
-<<<<<<< HEAD
-=======
         # prepare for action normalization
         self.action_normalization_stats = None
 
->>>>>>> upstream/master
         # maybe store dataset in memory for fast access
         if self.hdf5_cache_mode in ["all", "low_dim"]:
             obs_keys_in_memory = self.obs_keys
@@ -217,11 +182,7 @@ class SequenceDataset(torch.utils.data.Dataset):
 
         self.close_and_delete_hdf5_handle()
 
-<<<<<<< HEAD
-    def load_demo_info(self, filter_by_attribute=None, demos=None):
-=======
     def load_demo_info(self, filter_by_attribute=None, demos=None, demo_limit=None):
->>>>>>> upstream/master
         """
         Args:
             filter_by_attribute (str): if provided, use the provided filter key
@@ -243,13 +204,10 @@ class SequenceDataset(torch.utils.data.Dataset):
         inds = np.argsort([int(elem[5:]) for elem in self.demos])
         self.demos = [self.demos[i] for i in inds]
 
-<<<<<<< HEAD
-=======
         # limit number of demos
         if demo_limit is not None:
             self.demos = self.demos[:demo_limit]
 
->>>>>>> upstream/master
         self.n_demos = len(self.demos)
 
         # keep internal index maps to know which transitions belong to which demos
@@ -379,36 +337,6 @@ class SequenceDataset(torch.utils.data.Dataset):
         Computes a dataset-wide mean and standard deviation for the observations 
         (per dimension and per obs key) and returns it.
         """
-<<<<<<< HEAD
-        def _compute_traj_stats(traj_obs_dict):
-            """
-            Helper function to compute statistics over a single trajectory of observations.
-            """
-            traj_stats = { k : {} for k in traj_obs_dict }
-            for k in traj_obs_dict:
-                traj_stats[k]["n"] = traj_obs_dict[k].shape[0]
-                traj_stats[k]["mean"] = traj_obs_dict[k].mean(axis=0, keepdims=True) # [1, ...]
-                traj_stats[k]["sqdiff"] = ((traj_obs_dict[k] - traj_stats[k]["mean"]) ** 2).sum(axis=0, keepdims=True) # [1, ...]
-            return traj_stats
-
-        def _aggregate_traj_stats(traj_stats_a, traj_stats_b):
-            """
-            Helper function to aggregate trajectory statistics.
-            See https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Parallel_algorithm
-            for more information.
-            """
-            merged_stats = {}
-            for k in traj_stats_a:
-                n_a, avg_a, M2_a = traj_stats_a[k]["n"], traj_stats_a[k]["mean"], traj_stats_a[k]["sqdiff"]
-                n_b, avg_b, M2_b = traj_stats_b[k]["n"], traj_stats_b[k]["mean"], traj_stats_b[k]["sqdiff"]
-                n = n_a + n_b
-                mean = (n_a * avg_a + n_b * avg_b) / n
-                delta = (avg_b - avg_a)
-                M2 = M2_a + M2_b + (delta ** 2) * (n_a * n_b) / n
-                merged_stats[k] = dict(n=n, mean=mean, sqdiff=M2)
-            return merged_stats
-=======
->>>>>>> upstream/master
 
         # Run through all trajectories. For each one, compute minimal observation statistics, and then aggregate
         # with the previous statistics.
@@ -426,13 +354,8 @@ class SequenceDataset(torch.utils.data.Dataset):
         obs_normalization_stats = { k : {} for k in merged_stats }
         for k in merged_stats:
             # note we add a small tolerance of 1e-3 for std
-<<<<<<< HEAD
-            obs_normalization_stats[k]["mean"] = merged_stats[k]["mean"].astype(np.float32)
-            obs_normalization_stats[k]["std"] = (np.sqrt(merged_stats[k]["sqdiff"] / merged_stats[k]["n"]) + 1e-3).astype(np.float32)
-=======
             obs_normalization_stats[k]["offset"] = merged_stats[k]["mean"].astype(np.float32)
             obs_normalization_stats[k]["scale"] = (np.sqrt(merged_stats[k]["sqdiff"] / merged_stats[k]["n"]) + 1e-3).astype(np.float32)
->>>>>>> upstream/master
         return obs_normalization_stats
 
     def get_obs_normalization_stats(self):
@@ -449,8 +372,6 @@ class SequenceDataset(torch.utils.data.Dataset):
         assert self.hdf5_normalize_obs, "not using observation normalization!"
         return deepcopy(self.obs_normalization_stats)
 
-<<<<<<< HEAD
-=======
     def get_action_traj(self, ep):
         action_traj = dict()
         for key in self.action_keys:
@@ -485,7 +406,6 @@ class SequenceDataset(torch.utils.data.Dataset):
                 action_stats, self.action_config)
         return self.action_normalization_stats
 
->>>>>>> upstream/master
     def get_dataset_for_ep(self, ep, key):
         """
         Helper utility to get a dataset for a specific demonstration.
@@ -498,11 +418,7 @@ class SequenceDataset(torch.utils.data.Dataset):
             # if key is an observation, it may not be in memory
             if '/' in key:
                 key1, key2 = key.split('/')
-<<<<<<< HEAD
-                assert(key1 in ['obs', 'next_obs'])
-=======
                 assert(key1 in ['obs', 'next_obs', 'action_dict'])
->>>>>>> upstream/master
                 if key2 not in self.obs_keys_in_memory:
                     key_should_be_in_memory = False
 
@@ -510,11 +426,7 @@ class SequenceDataset(torch.utils.data.Dataset):
             # read cache
             if '/' in key:
                 key1, key2 = key.split('/')
-<<<<<<< HEAD
-                assert(key1 in ['obs', 'next_obs'])
-=======
                 assert(key1 in ['obs', 'next_obs', 'action_dict'])
->>>>>>> upstream/master
                 ret = self.hdf5_cache[ep][key1][key2]
             else:
                 ret = self.hdf5_cache[ep][key]
@@ -529,16 +441,11 @@ class SequenceDataset(torch.utils.data.Dataset):
         Fetch dataset sequence @index (inferred through internal index map), using the getitem_cache if available.
         """
         if self.hdf5_cache_mode == "all":
-<<<<<<< HEAD
-            return self.getitem_cache[index]
-        return self.get_item(index)
-=======
             output = self.getitem_cache[index]
         else:
             output = self.get_item(index)
 
         return output
->>>>>>> upstream/master
 
     def get_item(self, index):
         """
@@ -600,8 +507,6 @@ class SequenceDataset(torch.utils.data.Dataset):
             )
             meta["goal_obs"] = {k: goal[k][0] for k in goal}  # remove sequence dimension for goal
 
-<<<<<<< HEAD
-=======
         # get action components
         ac_dict = OrderedDict()
         for k in self.action_keys:
@@ -626,7 +531,6 @@ class SequenceDataset(torch.utils.data.Dataset):
             T = meta["actions"].shape[0]
             meta["obs"][LangUtils.LANG_EMB_OBS_KEY] = np.tile(self._lang_emb, (T, 1))
 
->>>>>>> upstream/master
         return meta
 
     def get_sequence_from_demo(self, demo_id, index_in_demo, keys, num_frames_to_stack=0, seq_length=1):
@@ -697,11 +601,7 @@ class SequenceDataset(torch.utils.data.Dataset):
             num_frames_to_stack=num_frames_to_stack,
             seq_length=seq_length,
         )
-<<<<<<< HEAD
-        obs = {k.split('/')[1]: obs[k] for k in obs}  # strip the prefix
-=======
         obs = {'/'.join(k.split('/')[1:]): obs[k] for k in obs}  # strip the prefix
->>>>>>> upstream/master
         if self.get_pad_mask:
             obs["pad_mask"] = pad_mask
 
@@ -774,8 +674,6 @@ class SequenceDataset(torch.utils.data.Dataset):
         `DataLoader` documentation, for more info.
         """
         return None
-<<<<<<< HEAD
-=======
 
 
 class CustomWeightedRandomSampler(torch.utils.data.WeightedRandomSampler):
@@ -1015,4 +913,3 @@ def action_stats_to_normalization_stats(action_stats, action_config):
                 'action_config.actions.normalization: "{}" is not supported'.format(norm_method))
     
     return action_normalization_stats
->>>>>>> upstream/master

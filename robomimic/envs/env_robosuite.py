@@ -24,10 +24,6 @@ try:
     import robocasa
 except ImportError:
     pass
-<<<<<<< HEAD
-
-import robomimic.utils.obs_utils as ObsUtils
-=======
 try:
     # try to import mimiclabs envs
     from mimiclabs.mimiclabs.envs import *
@@ -36,7 +32,6 @@ except ImportError:
 
 import robomimic.utils.obs_utils as ObsUtils
 import robomimic.utils.lang_utils as LangUtils
->>>>>>> upstream/master
 import robomimic.envs.env_base as EB
 
 # protect against missing mujoco-py module, since robosuite might be using mujoco-py or DM backend
@@ -56,11 +51,7 @@ class EnvRobosuite(EB.EnvBase):
         render_offscreen=False, 
         use_image_obs=False, 
         use_depth_obs=False, 
-<<<<<<< HEAD
-        postprocess_visual_obs=True, 
-=======
         lang=None,
->>>>>>> upstream/master
         **kwargs,
     ):
         """
@@ -81,16 +72,8 @@ class EnvRobosuite(EB.EnvBase):
                 on every env.step call. Set this to False for efficiency reasons, if depth
                 observations are not required.
 
-<<<<<<< HEAD
-            postprocess_visual_obs (bool): if True, postprocess image observations
-                to prepare for learning. This should only be False when extracting observations
-                for saving to a dataset (to save space on RGB images for example).
-        """
-        self.postprocess_visual_obs = postprocess_visual_obs
-=======
             lang: language descripton for the environment
         """
->>>>>>> upstream/master
         self.use_depth_obs = use_depth_obs
 
         # robosuite version check
@@ -128,16 +111,11 @@ class EnvRobosuite(EB.EnvBase):
             kwargs["camera_depth"] = use_depth_obs # rename kwarg
 
         self._env_name = env_name
-<<<<<<< HEAD
-        self._init_kwargs = deepcopy(kwargs)
-        self.env = robosuite.make(self._env_name, **kwargs)
-=======
 
         self._init_kwargs = deepcopy(kwargs)
         self.env = robosuite.make(self._env_name, **kwargs)
         self.lang = lang
         self._lang_emb = LangUtils.get_lang_emb(self.lang)
->>>>>>> upstream/master
 
         if self._is_v1:
             # Make sure joint position observations and eef vel observations are active
@@ -160,10 +138,7 @@ class EnvRobosuite(EB.EnvBase):
         """
         obs, r, done, info = self.env.step(action)
         obs = self.get_observation(obs)
-<<<<<<< HEAD
-=======
         info["is_success"] = self.is_success()
->>>>>>> upstream/master
         return obs, r, self.is_done(), info
 
     def reset(self, unset_ep_meta=True):
@@ -182,11 +157,7 @@ class EnvRobosuite(EB.EnvBase):
             # (this feature was set from robosuite v1.5 onwards)
             self.env.unset_ep_meta()
         di = self.env.reset()
-<<<<<<< HEAD
-        return self.get_observation(di)
-=======
         return self.get_observation(di)        
->>>>>>> upstream/master
 
     def reset_to(self, state):
         """
@@ -240,11 +211,7 @@ class EnvRobosuite(EB.EnvBase):
             return self.get_observation()
         return None
 
-<<<<<<< HEAD
-    def render(self, mode="human", height=None, width=None, camera_name="agentview"):
-=======
     def render(self, mode="human", height=None, width=None, camera_name=None):
->>>>>>> upstream/master
         """
         Render from simulation to either an on-screen window or off-screen to RGB array.
 
@@ -254,13 +221,10 @@ class EnvRobosuite(EB.EnvBase):
             width (int): width of image to render - only used if mode is "rgb_array"
             camera_name (str): camera name to use for rendering
         """
-<<<<<<< HEAD
-=======
         # if camera_name is None, infer from initial env kwargs
         if camera_name is None:
             camera_name = sorted(self._init_kwargs.get("camera_names", ["agentview"]))[0]
 
->>>>>>> upstream/master
         if mode == "human":
             cam_id = self.env.sim.model.camera_name2id(camera_name)
             self.env.viewer.set_camera(cam_id)
@@ -288,29 +252,15 @@ class EnvRobosuite(EB.EnvBase):
         for k in di:
             if (k in ObsUtils.OBS_KEYS_TO_MODALITIES) and ObsUtils.key_is_obs_modality(key=k, obs_modality="rgb"):
                 # by default images from mujoco are flipped in height
-<<<<<<< HEAD
-                ret[k] = di[k][::-1]
-                if self.postprocess_visual_obs:
-                    ret[k] = ObsUtils.process_obs(obs=ret[k], obs_key=k)
-            elif (k in ObsUtils.OBS_KEYS_TO_MODALITIES) and ObsUtils.key_is_obs_modality(key=k, obs_modality="depth"):
-                # by default depth images from mujoco are flipped in height
-                ret[k] = di[k][::-1]
-=======
                 ret[k] = di[k][::-1].copy()
             elif (k in ObsUtils.OBS_KEYS_TO_MODALITIES) and ObsUtils.key_is_obs_modality(key=k, obs_modality="depth"):
                 # by default depth images from mujoco are flipped in height
                 ret[k] = di[k][::-1].copy()
->>>>>>> upstream/master
                 if len(ret[k].shape) == 2:
                     ret[k] = ret[k][..., None] # (H, W, 1)
                 assert len(ret[k].shape) == 3 
                 # scale entries in depth map to correspond to real distance.
                 ret[k] = self.get_real_depth_map(ret[k])
-<<<<<<< HEAD
-                if self.postprocess_visual_obs:
-                    ret[k] = ObsUtils.process_obs(obs=ret[k], obs_key=k)
-=======
->>>>>>> upstream/master
 
         # "object" key contains object information
         ret["object"] = np.array(di["object-state"])
@@ -330,12 +280,9 @@ class EnvRobosuite(EB.EnvBase):
             ret["eef_pos"] = np.array(di["eef_pos"])
             ret["eef_quat"] = np.array(di["eef_quat"])
             ret["gripper_qpos"] = np.array(di["gripper_qpos"])
-<<<<<<< HEAD
-=======
 
         if self._lang_emb is not None:
             ret[LangUtils.LANG_EMB_OBS_KEY] = np.array(self._lang_emb)
->>>>>>> upstream/master
         return ret
 
     def get_real_depth_map(self, depth_map):
@@ -587,20 +534,12 @@ class EnvRobosuite(EB.EnvBase):
             obs_modality_specs["obs"]["depth"] = depth_modalities
         ObsUtils.initialize_obs_utils_with_obs_specs(obs_modality_specs)
 
-<<<<<<< HEAD
-        # note that @postprocess_visual_obs is False since this env's images will be written to a dataset
-=======
->>>>>>> upstream/master
         return cls(
             env_name=env_name,
             render=(False if render is None else render), 
             render_offscreen=(has_camera if render_offscreen is None else render_offscreen), 
             use_image_obs=(has_camera if use_image_obs is None else use_image_obs), 
             use_depth_obs=use_depth_obs,
-<<<<<<< HEAD
-            postprocess_visual_obs=False,
-=======
->>>>>>> upstream/master
             **kwargs,
         )
 

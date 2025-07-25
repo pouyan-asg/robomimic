@@ -11,11 +11,6 @@ import random
 
 import torch
 import torch.nn as nn
-<<<<<<< HEAD
-from torchvision.transforms import Lambda, Compose
-import torchvision.transforms.functional as TVF
-=======
->>>>>>> upstream/master
 
 import robomimic.models.base_nets as BaseNets
 import robomimic.utils.tensor_utils as TensorUtils
@@ -27,11 +22,8 @@ from robomimic.models.base_nets import *
 from robomimic.utils.vis_utils import visualize_image_randomizer
 from robomimic.macros import VISUALIZE_RANDOMIZER
 
-<<<<<<< HEAD
-=======
 import torchvision.transforms.functional as TVF
 from torchvision.transforms import Lambda, Compose
->>>>>>> upstream/master
 
 """
 ================================================
@@ -42,10 +34,6 @@ class EncoderCore(BaseNets.Module):
     """
     Abstract class used to categorize all cores used to encode observations
     """
-<<<<<<< HEAD
-
-=======
->>>>>>> upstream/master
     def __init__(self, input_shape):
         self.input_shape = input_shape
         super(EncoderCore, self).__init__()
@@ -198,8 +186,6 @@ class VisualCore(EncoderCore, BaseNets.ConvBase):
         return msg
 
 
-<<<<<<< HEAD
-=======
 class VisualCoreLanguageConditioned(VisualCore):
     """
     Variant of VisualCore that expects language embedding during forward pass.
@@ -246,7 +232,6 @@ class VisualCoreLanguageConditioned(VisualCore):
         return x
 
 
->>>>>>> upstream/master
 """
 ================================================
 Scan Core Networks (Conv1D Sequential + Pool)

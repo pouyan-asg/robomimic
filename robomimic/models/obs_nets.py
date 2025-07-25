@@ -21,16 +21,10 @@ import torch.distributions as D
 from robomimic.utils.python_utils import extract_class_init_kwargs_from_dict
 import robomimic.utils.tensor_utils as TensorUtils
 import robomimic.utils.obs_utils as ObsUtils
-<<<<<<< HEAD
-from robomimic.models.base_nets import Module, Sequential, MLP, RNN_Base, ResNet18Conv, SpatialSoftmax, \
-    FeatureAggregator
-from robomimic.models.obs_core import VisualCore, Randomizer
-=======
 import robomimic.utils.lang_utils as LangUtils
 from robomimic.models.base_nets import Module, Sequential, MLP, RNN_Base, ResNet18Conv, SpatialSoftmax, \
     FeatureAggregator
 from robomimic.models.obs_core import VisualCore, Randomizer, VisualCoreLanguageConditioned
->>>>>>> upstream/master
 from robomimic.models.transformers import PositionalEncoding, GPT_Backbone
 
 
@@ -71,27 +65,6 @@ def obs_encoder_factory(
         obs_modality = ObsUtils.OBS_KEYS_TO_MODALITIES[k]
         enc_kwargs = deepcopy(ObsUtils.DEFAULT_ENCODER_KWARGS[obs_modality]) if encoder_kwargs is None else \
             deepcopy(encoder_kwargs[obs_modality])
-<<<<<<< HEAD
-
-        for obs_module, cls_mapping in zip(("core", "obs_randomizer"),
-                                      (ObsUtils.OBS_ENCODER_CORES, ObsUtils.OBS_RANDOMIZERS)):
-            # Sanity check for kwargs in case they don't exist / are None
-            if enc_kwargs.get(f"{obs_module}_kwargs", None) is None:
-                enc_kwargs[f"{obs_module}_kwargs"] = {}
-            # Add in input shape info
-            enc_kwargs[f"{obs_module}_kwargs"]["input_shape"] = obs_shape
-            # If group class is specified, then make sure corresponding kwargs only contain relevant kwargs
-            if enc_kwargs[f"{obs_module}_class"] is not None:
-                enc_kwargs[f"{obs_module}_kwargs"] = extract_class_init_kwargs_from_dict(
-                    cls=cls_mapping[enc_kwargs[f"{obs_module}_class"]],
-                    dic=enc_kwargs[f"{obs_module}_kwargs"],
-                    copy=False,
-                )
-
-        # Add in input shape info
-        randomizer = None if enc_kwargs["obs_randomizer_class"] is None else \
-            ObsUtils.OBS_RANDOMIZERS[enc_kwargs["obs_randomizer_class"]](**enc_kwargs["obs_randomizer_kwargs"])
-=======
             
         # Sanity check for kwargs in case they don't exist / are None
         if enc_kwargs.get("core_kwargs", None) is None:
@@ -130,18 +103,13 @@ def obs_encoder_factory(
                 rand = ObsUtils.OBS_RANDOMIZERS[rand_class](**rand_kwargs)
                 rand_input_shape = rand.output_shape_in(rand_input_shape)
             randomizers.append(rand)
->>>>>>> upstream/master
 
         enc.register_obs_key(
             name=k,
             shape=obs_shape,
             net_class=enc_kwargs["core_class"],
             net_kwargs=enc_kwargs["core_kwargs"],
-<<<<<<< HEAD
-            randomizer=randomizer,
-=======
             randomizers=randomizers,
->>>>>>> upstream/master
         )
 
     enc.make()
@@ -178,11 +146,7 @@ class ObservationEncoder(Module):
         net_class=None, 
         net_kwargs=None, 
         net=None, 
-<<<<<<< HEAD
-        randomizer=None,
-=======
         randomizers=None,
->>>>>>> upstream/master
         share_net_from=None,
     ):
         """
@@ -217,13 +181,6 @@ class ObservationEncoder(Module):
             assert share_net_from in self.obs_shapes
 
         net_kwargs = deepcopy(net_kwargs) if net_kwargs is not None else {}
-<<<<<<< HEAD
-        if randomizer is not None:
-            assert isinstance(randomizer, Randomizer)
-            if net_kwargs is not None:
-                # update input shape to visual core
-                net_kwargs["input_shape"] = randomizer.output_shape_in(shape)
-=======
         randomizers = [] if randomizers is None else randomizers # handles None
         if not isinstance(randomizers, list): # handle single randomizer
             randomizers = [randomizers]
@@ -234,17 +191,12 @@ class ObservationEncoder(Module):
                 rand_output_shape = rand.output_shape_in(rand_output_shape)
         if net_kwargs is not None:
             net_kwargs["input_shape"] = rand_output_shape
->>>>>>> upstream/master
 
         self.obs_shapes[name] = shape
         self.obs_nets_classes[name] = net_class
         self.obs_nets_kwargs[name] = net_kwargs
         self.obs_nets[name] = net
-<<<<<<< HEAD
-        self.obs_randomizers[name] = randomizer
-=======
         self.obs_randomizers[name] = nn.ModuleList(randomizers)
->>>>>>> upstream/master
         self.obs_share_mods[name] = share_net_from
 
     def make(self):
@@ -273,8 +225,6 @@ class ObservationEncoder(Module):
         if self.feature_activation is not None:
             self.activation = self.feature_activation()
 
-<<<<<<< HEAD
-=======
     def _get_vis_lang_info(self):
         """
         Helper function to extract information on vision and language keys.
@@ -301,7 +251,6 @@ class ObservationEncoder(Module):
             include_lang_feat = False
         return rgb_inds, rgb_inds_need_lang_cond, lang_inds, lang_keys, include_lang_feat
 
->>>>>>> upstream/master
     def forward(self, obs_dict):
         """
         Processes modalities according to the ordering in @self.obs_shapes. For each
@@ -325,23 +274,6 @@ class ObservationEncoder(Module):
             list(obs_dict.keys()), list(self.obs_shapes.keys())
         )
 
-<<<<<<< HEAD
-        # process modalities by order given by @self.obs_shapes
-        feats = []
-        for k in self.obs_shapes:
-            x = obs_dict[k]
-            # maybe process encoder input with randomizer
-            if self.obs_randomizers[k] is not None:
-                x = self.obs_randomizers[k].forward_in(x)
-            # maybe process with obs net
-            if self.obs_nets[k] is not None:
-                x = self.obs_nets[k](x)
-                if self.activation is not None:
-                    x = self.activation(x)
-            # maybe process encoder output with randomizer
-            if self.obs_randomizers[k] is not None:
-                x = self.obs_randomizers[k].forward_out(x)
-=======
         rgb_inds, rgb_inds_need_lang_cond, lang_inds, lang_keys, include_lang_feat = self._get_vis_lang_info()
 
         # process modalities by order given by @self.obs_shapes
@@ -367,7 +299,6 @@ class ObservationEncoder(Module):
             for rand in reversed(self.obs_randomizers[k]):
                 if rand is not None:
                     x = rand.forward_out(x)
->>>>>>> upstream/master
             # flatten to [B, D]
             x = TensorUtils.flatten(x, begin_axis=1)
             feats.append(x)
@@ -380,17 +311,6 @@ class ObservationEncoder(Module):
         Compute the output shape of the encoder.
         """
         feat_dim = 0
-<<<<<<< HEAD
-        for k in self.obs_shapes:
-            feat_shape = self.obs_shapes[k]
-            if self.obs_randomizers[k] is not None:
-                feat_shape = self.obs_randomizers[k].output_shape_in(feat_shape)
-            if self.obs_nets[k] is not None:
-                feat_shape = self.obs_nets[k].output_shape(feat_shape)
-            if self.obs_randomizers[k] is not None:
-                feat_shape = self.obs_randomizers[k].output_shape_out(feat_shape)
-            feat_dim += int(np.prod(feat_shape))
-=======
 
         # might need to omit language embedding from feature size
         rgb_inds, rgb_inds_need_lang_cond, lang_inds, lang_keys, include_lang_feat = self._get_vis_lang_info()
@@ -408,7 +328,6 @@ class ObservationEncoder(Module):
                     feat_shape = rand.output_shape_out(feat_shape)
             if not ((k == LangUtils.LANG_EMB_OBS_KEY) and skip_lang_dim):
                 feat_dim += int(np.prod(feat_shape))
->>>>>>> upstream/master
         return [feat_dim]
 
     def __repr__(self):

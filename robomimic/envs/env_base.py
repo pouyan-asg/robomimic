@@ -26,10 +26,6 @@ class EnvBase(abc.ABC):
         render_offscreen=False, 
         use_image_obs=False, 
         use_depth_obs=False, 
-<<<<<<< HEAD
-        postprocess_visual_obs=True, 
-=======
->>>>>>> upstream/master
         **kwargs,
     ):
         """

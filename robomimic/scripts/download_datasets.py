@@ -13,11 +13,7 @@ Args:
         like to override the location.
 
     tasks (list): Tasks to download datasets for. Defaults to lift task. Pass 'all' to 
-<<<<<<< HEAD
-        download all tasks (sim + real), 'sim' to download all sim tasks, 'real' to 
-=======
         download all tasks (sim + real) 'sim' to download all sim tasks, 'real' to 
->>>>>>> upstream/master
         download all real tasks, or directly specify the list of tasks.
     
     dataset_types (list): Dataset types to download datasets for (e.g. ph, mh, mg). 

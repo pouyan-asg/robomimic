@@ -77,11 +77,7 @@ def algo_config_to_class(algo_config):
 
 class BC(PolicyAlgo):
     """
-<<<<<<< HEAD
-    Vanila BC training.
-=======
     Normal BC training.
->>>>>>> upstream/master
     """
     def _create_networks(self):
         """
@@ -212,10 +208,7 @@ class BC(PolicyAlgo):
             net=self.nets["policy"],
             optim=self.optimizers["policy"],
             loss=losses["action_loss"],
-<<<<<<< HEAD
-=======
             max_grad_norm=self.global_config.train.max_grad_norm,
->>>>>>> upstream/master
         )
         info["policy_grad_norms"] = policy_grad_norms
         return info
@@ -709,12 +702,9 @@ class BC_Transformer(BC):
         """
         self.context_length = self.algo_config.transformer.context_length
         self.supervise_all_steps = self.algo_config.transformer.supervise_all_steps
-<<<<<<< HEAD
-=======
         self.pred_future_acs = self.algo_config.transformer.pred_future_acs
         if self.pred_future_acs:
             assert self.supervise_all_steps is True
->>>>>>> upstream/master
 
     def process_batch_for_training(self, batch):
         """
@@ -734,25 +724,18 @@ class BC_Transformer(BC):
 
         if self.supervise_all_steps:
             # supervision on entire sequence (instead of just current timestep)
-<<<<<<< HEAD
-            input_batch["actions"] = batch["actions"][:, :h, :]
-=======
             if self.pred_future_acs:
                 ac_start = h - 1
             else:
                 ac_start = 0
             input_batch["actions"] = batch["actions"][:, ac_start:ac_start+h, :]
->>>>>>> upstream/master
         else:
             # just use current timestep
             input_batch["actions"] = batch["actions"][:, h-1, :]
 
-<<<<<<< HEAD
-=======
         if self.pred_future_acs:
             assert input_batch["actions"].shape[1] == h
 
->>>>>>> upstream/master
         input_batch = TensorUtils.to_device(TensorUtils.to_float(input_batch), self.device)
         return input_batch
 
@@ -794,10 +777,6 @@ class BC_Transformer(BC):
         """
         assert not self.nets.training
 
-<<<<<<< HEAD
-        return self.nets["policy"](obs_dict, actions=None, goal_dict=goal_dict)[:, -1, :]
-
-=======
         output = self.nets["policy"](obs_dict, actions=None, goal_dict=goal_dict)
 
         if self.supervise_all_steps:
@@ -811,7 +790,6 @@ class BC_Transformer(BC):
         return output
 
         
->>>>>>> upstream/master
 
 class BC_Transformer_GMM(BC_Transformer):
     """
