@@ -571,4 +571,9 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    cuda_available = torch.cuda.is_available()
+    if not cuda_available:
+        print("\n\033[91mWARNING: CUDA is not available; training will be performed on CPU. This will be slow!\033[0m\n")
+    else:
+        print("\n\033[92mCUDA is available; training will be performed on GPU.\033[0m\n")
     main(args)
