@@ -39,6 +39,8 @@ class ConfigMeta(type):
     """
     def __new__(meta, name, bases, class_dict):
         cls = super(ConfigMeta, meta).__new__(meta, name, bases, class_dict)
+        # If the class is not BaseConfig itself, it adds the class to REGISTERED_CONFIGS 
+        # using the class's ALGO_NAME property as the key.
         if cls.__name__ != "BaseConfig":
             REGISTERED_CONFIGS[cls.ALGO_NAME] = cls
         return cls

@@ -32,7 +32,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dataset",
         type=str,
-        default='',
+        default='/home/pouyan/phd/imitation_learning/robomimic/datasets/can/mh/low_dim_v15.hdf5',
         help="path to hdf5 dataset",
     )
     parser.add_argument(

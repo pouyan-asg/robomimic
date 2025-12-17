@@ -105,12 +105,14 @@ def train(config, device, resume=False):
         deep_update(env_meta, config.experiment.env_meta_update_dict)
         env_meta_list.append(env_meta)
 
+         # ?
         shape_meta = FileUtils.get_shape_metadata_from_dataset(
             dataset_config=dataset_cfg,
             action_keys=config.train.action_keys,
             all_obs_keys=config.all_obs_keys,
             verbose=True
         )
+        # ?
         shape_meta_list.append(shape_meta)
 
     if config.experiment.env is not None:
@@ -163,6 +165,8 @@ def train(config, device, resume=False):
                 print(env)
 
     print("")
+
+    # injaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
     # load training data
     trainset, validset = TrainUtils.load_data_for_training(config, obs_keys=shape_meta["all_obs_keys"])
@@ -489,6 +493,7 @@ def main(args):
 
     # get torch device
     device = TorchUtils.get_torch_device(try_to_use_cuda=config.train.cuda)
+    print(f"\n\033[93m{device}is using!\033[0m\n")
 
     # maybe modify config for debugging purposes
     if args.debug:
@@ -571,9 +576,11 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+
     cuda_available = torch.cuda.is_available()
     if not cuda_available:
         print("\n\033[91mWARNING: CUDA is not available; training will be performed on CPU. This will be slow!\033[0m\n")
     else:
         print("\n\033[92mCUDA is available; training will be performed on GPU.\033[0m\n")
+
     main(args)
